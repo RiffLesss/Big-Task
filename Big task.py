@@ -30,6 +30,18 @@ class MapParams(object):
             self.zoom += 1
         elif event.key == 281 and self.zoom > 2:
             self.zoom -= 1
+        elif event.key == 276:
+            self.lon -= LON_STEP * math.pow(2, 15 - self.zoom)
+        elif event.key == 275:
+            self.lon += LON_STEP * math.pow(2, 15 - self.zoom)
+        elif event.key == 273 and self.lat < 85:
+            self.lat += LAT_STEP * math.pow(2, 15 - self.zoom)
+        elif event.key == 274 and self.lat > -85:
+            self.lat -= LAT_STEP * math.pow(2, 15 - self.zoom)
+        if self.lon > 180:
+            self.lon -= 360
+        if self.lat < -180:
+            self.lat += 360
 
 
 def screen_to_geo(self, pos):
