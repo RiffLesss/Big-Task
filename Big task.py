@@ -25,6 +25,12 @@ class MapParams(object):
     def ll(self):
         return ll(self.lon, self.lat)
 
+    def update(self, event):
+        if event.key == 280 and self.zoom < 19:
+            self.zoom += 1
+        elif event.key == 281 and self.zoom > 2:
+            self.zoom -= 1
+
 
 def screen_to_geo(self, pos):
     dy = 225 - pos[1]
@@ -35,7 +41,6 @@ def screen_to_geo(self, pos):
 
 def load_map(mp):
     map_request = "http://static-maps.yandex.ru/1.x/?ll={}&z={}&l={}".format(mp.ll(), mp.zoom, mp.type)
-    print(map_request)
     response = requests.get(map_request)
     if not response:
         print("Ошибка выполнения запроса:")
@@ -53,21 +58,21 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
     mp = MapParams()
-    map_file = load_map(mp)
-    screen.blit(pygame.image.load(map_file), (0, 0))
-    pygame.display.flip()
     while True:
         event = pygame.event.wait()
         if event.type == pygame.QUIT:
             break
+        elif event.type == pygame.KEYUP:
+            mp.update(event)
         else:
             continue
 
-
+        map_file = load_map(mp)
+        screen.blit(pygame.image.load(map_file), (0, 0))
+        pygame.display.flip()
     pygame.quit()
     os.remove(map_file)
 
 
-if __name__ == "__main__":
-    main()
+main()
 
