@@ -42,6 +42,12 @@ class MapParams(object):
             self.lon -= 360
         if self.lat < -180:
             self.lat += 360
+        if event.key == 109:
+            self.type = 'map'
+        elif event.key == 115:
+            self.type = 'sat'
+        elif event.key == 103:
+            self.type = 'sat%2Cskl'
 
 
 def screen_to_geo(self, pos):
@@ -70,17 +76,33 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((600, 450))
     mp = MapParams()
+    button = pygame.Rect(0, 0, 30, 30)
+    button2 = pygame.Rect(60, 0, 30, 30)
+    button3 = pygame.Rect(30, 0, 30, 30)
     while True:
         event = pygame.event.wait()
         if event.type == pygame.QUIT:
             break
         elif event.type == pygame.KEYUP:
             mp.update(event)
+            print(event.key)
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            mouse_pos = event.pos
+
+            if button.collidepoint(mouse_pos):
+                mp.type = 'sat%2Cskl'
+            elif button2.collidepoint(mouse_pos):
+                mp.type = 'sat'
+            elif button3.collidepoint(mouse_pos):
+                mp.type = 'map'
         else:
             continue
 
         map_file = load_map(mp)
         screen.blit(pygame.image.load(map_file), (0, 0))
+        pygame.draw.rect(screen, [255, 0, 0], button)
+        pygame.draw.rect(screen, [0, 255, 0], button2)
+        pygame.draw.rect(screen, [0, 0, 255], button3)
         pygame.display.flip()
     pygame.quit()
     os.remove(map_file)
